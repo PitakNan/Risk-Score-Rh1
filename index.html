@@ -237,7 +237,7 @@ body{font-family:'Segoe UI',system-ui,sans-serif;background:var(--bg);color:#1e2
 .sort-add:hover{border-color:#2563eb;color:#2563eb;background:#eff6ff}
 
 /* Focus table */
-.focus-tbl-wrap{overflow-x:auto;margin-bottom:16px;border-radius:10px;box-shadow:0 2px 10px rgba(0,0,0,.07);border:1px solid #e2e8f0}
+.focus-tbl-wrap{overflow-x:auto;overflow-y:auto;max-height:320px;margin-bottom:16px;border-radius:10px;box-shadow:0 2px 10px rgba(0,0,0,.07);border:1px solid #e2e8f0}
 .focus-tbl{width:100%;border-collapse:collapse;font-size:12px}
 .focus-tbl th{background:#1e3a5f;color:#fff;padding:9px 10px;text-align:center;font-weight:700;position:sticky;top:0;z-index:2;white-space:nowrap;font-size:11px;line-height:1.3}
 .focus-tbl th.left{text-align:left}
@@ -257,6 +257,52 @@ body{font-family:'Segoe UI',system-ui,sans-serif;background:var(--bg);color:#1e2
 .ftm-btn{padding:4px 11px;border-radius:20px;border:1.5px solid #e2e8f0;background:#f8fafc;font-size:11px;font-weight:600;color:#64748b;cursor:pointer;transition:all .18s;white-space:nowrap}
 .ftm-btn:hover{border-color:#cbd5e1;background:#f1f5f9}
 .ftm-btn.active{background:#2563eb;color:#fff;border-color:#2563eb}
+
+/* ═══ ANALYSIS BOX ════════════════════════════════════════════ */
+.ana-hosp-block{background:#fff;border:1px solid #e2e8f0;border-radius:10px;padding:16px 18px;margin-bottom:14px;box-shadow:0 2px 8px rgba(0,0,0,.05)}
+.ana-hosp-hdr{display:flex;align-items:baseline;gap:10px;margin-bottom:12px;border-bottom:2px solid #f1f5f9;padding-bottom:9px}
+.ana-hosp-name{font-size:14px;font-weight:700;color:#0f172a}
+.ana-hosp-meta{font-size:11px;color:#64748b}
+.ana-row{margin-bottom:10px;padding:8px 10px;background:#f8fafc;border-radius:7px;border-left:3px solid #e2e8f0}
+.ana-row-top{display:flex;align-items:center;gap:8px;margin-bottom:4px;flex-wrap:wrap}
+.ana-metric-lbl{font-size:12px;font-weight:700;color:#334155;min-width:150px}
+.ana-trend-badge{font-size:11px;font-weight:700;padding:2px 9px;border-radius:10px;white-space:nowrap}
+.trend-good{background:#dcfce7;color:#15803d}
+.trend-bad{background:#fee2e2;color:#991b1b}
+.trend-neutral{background:#f1f5f9;color:#475569}
+.ana-latest{font-size:11px;font-weight:600;margin-left:auto;white-space:nowrap}
+.ana-row-detail{font-size:10px;color:#64748b;line-height:1.6;padding-left:2px}
+.ana-corr-wrap{margin-top:10px;padding:8px 12px;background:#f0f9ff;border:1px solid #bae6fd;border-radius:7px;font-size:11px;display:flex;flex-wrap:wrap;gap:8px;align-items:center}
+.ana-corr-label{font-size:10px;font-weight:700;color:#0369a1;text-transform:uppercase;letter-spacing:.3px}
+.ana-corr-good{color:#15803d;font-weight:600;background:#dcfce7;padding:1px 7px;border-radius:8px}
+.ana-corr-warn{color:#92400e;font-weight:600;background:#fef9c3;padding:1px 7px;border-radius:8px}
+.ana-corr-bad{color:#991b1b;font-weight:600;background:#fee2e2;padding:1px 7px;border-radius:8px}
+.ana-assessment{margin-top:10px;padding:10px 14px;background:#fffbeb;border:1px solid #fde68a;border-radius:8px;font-size:11px;color:#713f12;line-height:1.75}
+.ana-assessment strong{color:#92400e}
+
+/* ═══ PRINT / PDF ══════════════════════════════════════════════ */
+.btn-print{padding:6px 14px;border-radius:7px;border:1.5px solid #7c3aed;background:#f5f3ff;color:#7c3aed;font-size:12px;font-weight:600;cursor:pointer}
+.btn-print:hover{background:#ede9fe}
+@media print{
+  .tab-nav,.focus-bar,.hdr,.stat-bar,.btn-export,.btn-print,.btn-reset,
+  #focus-var-chips,.sort-builder,#focus-sel-chips,.sort-add,.sort-del,.sort-move,
+  .section-title:has(+#focus-var-chips),.panel-overlay,.hd-overlay{display:none!important}
+  #page-main{display:none!important}
+  #page-focus{display:block!important}
+  .container{padding:0!important;max-width:100%!important}
+  .section-title{font-size:11px;margin:12px 0 6px}
+  .focus-tbl-wrap{overflow:visible!important;max-height:none!important;border:none!important;box-shadow:none!important}
+  .focus-tbl{font-size:9px}
+  .focus-tbl th{-webkit-print-color-adjust:exact;print-color-adjust:exact;background:#1e3a5f!important;color:#fff!important;font-size:9px}
+  .focus-tbl td{font-size:9px;padding:4px 6px}
+  thead{display:table-header-group}
+  tbody tr{page-break-inside:avoid}
+  .trend-card{page-break-inside:avoid;box-shadow:none!important;border:1px solid #e2e8f0}
+  .ana-hosp-block{page-break-inside:avoid;box-shadow:none!important}
+  .trend-good,.trend-bad,.trend-neutral,.ana-corr-good,.ana-corr-warn,.ana-corr-bad,
+  .ana-assessment{-webkit-print-color-adjust:exact;print-color-adjust:exact}
+  @page{size:A4;margin:12mm}
+}
 </style>
 <script src="https://cdn.jsdelivr.net/npm/chart.js@4.5.1/dist/chart.umd.min.js"></script>
 </head>
@@ -264,7 +310,7 @@ body{font-family:'Segoe UI',system-ui,sans-serif;background:var(--bg);color:#1e2
 
 <div class="hdr">
   <h1>📊 Risk Score Dashboard</h1>
-  <p>เขตสุขภาพที่ 1 — โรงพยาบาลภาคเหนือ 8 จังหวัด ปีงบ 2565–2569</p>
+  <p>เขตสุขภาพที่ 1 (8 จังหวัด) ปีงบ 2565–2569</p>
 </div>
 <div class="tab-nav">
   <button class="tab-btn active" data-tab="main" onclick="switchTab('main')">📊 หน้าหลัก</button>
@@ -436,7 +482,7 @@ body{font-family:'Segoe UI',system-ui,sans-serif;background:var(--bg);color:#1e2
       <div style="margin-bottom:12px">
         <div class="section-title" style="border:none;padding:0;margin:0 0 10px">📈 กราฟแนวโน้มรายเดือน — โรงพยาบาลที่เลือก</div>
         <div style="display:flex;flex-wrap:wrap;gap:6px">
-        <button class="ftm-btn active" data-m="risk" onclick="toggleFocusTrendMetric('risk',this)">Risk Score</button>
+        <button class="ftm-btn" data-m="risk" onclick="toggleFocusTrendMetric('risk',this)">Risk Score</button>
         <button class="ftm-btn" data-m="LiI" onclick="toggleFocusTrendMetric('LiI',this)">LiI สภาพคล่อง</button>
         <button class="ftm-btn" data-m="StI" onclick="toggleFocusTrendMetric('StI',this)">StI เสถียรภาพ</button>
         <button class="ftm-btn" data-m="SuI" onclick="toggleFocusTrendMetric('SuI',this)">SuI ความยั่งยืน</button>
@@ -446,7 +492,7 @@ body{font-family:'Segoe UI',system-ui,sans-serif;background:var(--bg);color:#1e2
         <button class="ftm-btn" data-m="NWC" onclick="toggleFocusTrendMetric('NWC',this)">NWC</button>
         <button class="ftm-btn" data-m="NI" onclick="toggleFocusTrendMetric('NI',this)">Net Income</button>
         <button class="ftm-btn" data-m="EBITDA" onclick="toggleFocusTrendMetric('EBITDA',this)">EBITDA</button>
-        <button class="ftm-btn" data-m="bumrung" onclick="toggleFocusTrendMetric('bumrung',this)">เงินบำรุงสุทธิ</button>
+        <button class="ftm-btn active" data-m="bumrung" onclick="toggleFocusTrendMetric('bumrung',this)">เงินบำรุงสุทธิ</button>
         </div>
       </div>
       <div id="focus-trend-wrap" style="position:relative;height:320px">
@@ -455,6 +501,16 @@ body{font-family:'Segoe UI',system-ui,sans-serif;background:var(--bg);color:#1e2
           <div>เลือก รพ. จากตารางด้านบนเพื่อแสดงกราฟแนวโน้ม</div>
         </div>
         <canvas id="focus-trend-chart" style="display:none"></canvas>
+      </div>
+    </div>
+
+    <div id="focus-analysis-wrap" style="display:none;margin-top:4px">
+      <div class="section-title" style="margin-top:20px">🧠 บทวิเคราะห์เบื้องต้น
+        <span style="font-weight:400;font-size:11px;color:#94a3b8;margin-left:8px">อ้างอิงจากข้อมูลทุกงวดของ รพ. ที่เลือก</span>
+      </div>
+      <div id="focus-analysis-content"></div>
+      <div style="text-align:right;margin-top:4px;margin-bottom:24px">
+        <button class="btn-print" onclick="printFocusPage()">🖨️ Export PDF</button>
       </div>
     </div>
   </div>
@@ -739,6 +795,18 @@ function toggleRisk(score) {
   openPanel(
     `${cfg.label} — ${cfg.desc}`,
     `Risk Score = ${score} | ${items.length} รายการ | ${new Set(items.map(r=>r.id)).size} โรงพยาบาล`,
+    items
+  );
+}
+
+function openRiskProvPanel(prov, riskScore) {
+  const cfg = RISK_CFG[riskScore];
+  const latest = _getLatestFiltered();
+  const items = latest.filter(r => r.prov === prov && Math.min(7, Math.max(0, Math.round(+r.risk))) === riskScore);
+  if (!items.length) return;
+  openPanel(
+    `${prov} — ${cfg.label} (${cfg.desc})`,
+    `Risk ${riskScore} | ${new Set(items.map(r => r.id)).size} โรงพยาบาล | ${items[0].period}`,
     items
   );
 }
@@ -1364,10 +1432,37 @@ function renderHospAnalysis(data) {
   const pmH  = hasPM  ? pmLabel  : '—';
   const yoyH = hasYoY ? yoyLabel + (yoyYearsBack>1?' ⚠️':'') : '—';
 
+  // ── Risk history block ────────────────────────────────────────
+  const allHospRecs = RAW.records.filter(r => r.id === hdHospId).sort((a,b) => a.sort_key - b.sort_key);
+  const histCount = [0,1,2,3,4,5,6,7].map(lv => allHospRecs.filter(r => Math.min(7,Math.max(0,Math.round(+r.risk))) === lv).length);
+  const histTotal = allHospRecs.length;
+  const histFirst = allHospRecs[0]?.period ?? '—';
+  const histLast  = allHospRecs[allHospRecs.length-1]?.period ?? '—';
+  const curRisk   = Math.min(7, Math.max(0, Math.round(+(latestRec.risk ?? 0))));
+  const HCOL = ['#166534','#15803d','#4d7c0f','#92400e','#9a3412','#7f1d1d','#581c87','#dc2626'];
+  const HBGC = ['#dcfce7','#bbf7d0','#ecfccb','#fef3c7','#ffedd5','#fee2e2','#f3e8ff','#fef2f2'];
+  const riskHistCells = [0,1,2,3,4,5,6,7].map(lv => {
+    const cnt = histCount[lv];
+    const isCur = lv === curRisk;
+    return `<div style="text-align:center;padding:5px 4px;border-radius:7px;border:${isCur?'2px solid '+HCOL[lv]:'1px solid #e2e8f0'};background:${cnt>0?HBGC[lv]:'#f8fafc'};min-width:44px;flex:1">
+      <div style="font-size:9px;font-weight:700;color:${HCOL[lv]}">Risk ${lv}${isCur?' ◀':''}</div>
+      <div style="font-size:16px;font-weight:800;color:${cnt>0?HCOL[lv]:'#cbd5e1'}">${cnt>0?cnt:'—'}</div>
+      <div style="font-size:9px;color:#94a3b8">${cnt>0?'งวด':''}</div>
+    </div>`;
+  }).join('');
+
   document.getElementById('hd-analysis').innerHTML = `
     <!-- ① Executive Overview -->
     <div style="background:#f8fafc;border-left:4px solid ${accentCol};border-radius:0 8px 8px 0;padding:10px 14px;margin-bottom:12px;line-height:1.7;font-size:12px">
       ${execSummary}
+    </div>
+
+    <!-- ① Risk History -->
+    <div style="background:#f8fafc;border:1px solid #e2e8f0;border-radius:10px;padding:10px 12px;margin-bottom:14px">
+      <div style="font-size:10px;font-weight:700;color:#64748b;text-transform:uppercase;letter-spacing:.5px;margin-bottom:8px">
+        📅 ประวัติ Risk Score ทั้งหมด <span style="font-weight:400;text-transform:none">(${histFirst}–${histLast} | ${histTotal} งวด)</span>
+      </div>
+      <div style="display:flex;flex-wrap:wrap;gap:4px">${riskHistCells}</div>
     </div>
 
     <!-- ② Metric Status Grid -->
@@ -1805,7 +1900,7 @@ function renderRiskSummary() {
     const cells = [0,1,2,3,4,5,6,7].map(i => {
       const v = row[i];
       return v > 0
-        ? `<td style="background:${COLORS[i]};color:${TEXTS[i]};font-weight:600">${v}</td>`
+        ? `<td style="background:${COLORS[i]};color:${TEXTS[i]};font-weight:600;cursor:pointer" title="คลิกดูรายชื่อ รพ." onclick="openRiskProvPanel('${prov}',${i})">${v}</td>`
         : `<td style="color:#cbd5e1">—</td>`;
     }).join('');
     return `<tr><td class="prov-cell">${prov}</td>${cells}<td class="total-cell">${rowTotal}</td></tr>`;
@@ -2374,7 +2469,7 @@ const fState = {
   metrics: ['bumrung','EBITDA','NI','risk'],
   sorts: [{m:'bumrung',d:'asc'},{m:'EBITDA',d:'asc'},{m:'NI',d:'asc'},{m:'risk',d:'desc'}],
   selected: new Set(),
-  trendMetrics: new Set(['risk']),
+  trendMetrics: new Set(['bumrung']),
   _init: false,
 };
 let focusTrendChart = null;
@@ -2653,17 +2748,26 @@ function renderFocusTrend() {
 
   const metrics    = [...fState.trendMetrics];
   const hospIds    = [...fState.selected];
+  const MONEY_METRICS  = new Set(['NWC','NI','EBITDA','bumrung']);
+  const hasMoneyMetric = metrics.some(m => MONEY_METRICS.has(m));
+  const hasRatioMetric = metrics.some(m => !MONEY_METRICS.has(m));
   const DASH_STYLES = [[], [6,3], [2,3], [10,3,2,3]];
 
   const datasets = [];
+  const MONEY_COLORS = ['#f97316','#dc2626','#8b5cf6','#ec4899','#ca8a04'];
+  const RATIO_COLORS = ['#2563eb','#16a34a','#0891b2','#0d9488','#65a30d','#7c3aed','#059669'];
+  let _mci = 0, _rci = 0;
+
   hospIds.forEach((id, hIdx) => {
     const info     = RAW.records.find(r => r.id === id);
     const hospName = info ? info.name : String(id);
-    const baseColor = FOCUS_PALETTE[hIdx % FOCUS_PALETTE.length];
+    const hospDash = hospIds.length > 1 ? DASH_STYLES[hIdx % DASH_STYLES.length] : [];
 
     metrics.forEach((metric, mIdx) => {
-      const cfg  = METRIC_CFG[metric];
-      const dash = DASH_STYLES[mIdx % DASH_STYLES.length];
+      const cfg     = METRIC_CFG[metric];
+      const isMoney = MONEY_METRICS.has(metric);
+      const color   = isMoney ? MONEY_COLORS[_mci++ % MONEY_COLORS.length] : RATIO_COLORS[_rci++ % RATIO_COLORS.length];
+      const dash    = hospDash;
       const label = metrics.length > 1
         ? hospName + ' — ' + cfg.label
         : hospName;
@@ -2673,8 +2777,9 @@ function renderFocusTrend() {
       });
       datasets.push({
         label, data, _metric: metric,
-        borderColor: baseColor,
-        backgroundColor: baseColor + '18',
+        yAxisID: MONEY_METRICS.has(metric) ? 'y' : 'y1',
+        borderColor: color,
+        backgroundColor: color + '22',
         borderWidth: 2,
         borderDash: dash,
         pointRadius: 3, pointHoverRadius: 5,
@@ -2706,21 +2811,23 @@ function renderFocusTrend() {
       scales: {
         x: { ticks: { font: { size: 10 }, maxRotation: 45, minRotation: 30 } },
         y: {
-          ticks: { font: { size: 10 }, callback: v => {
-            if (multiMetric) return v.toLocaleString();
-            return METRIC_CFG[metrics[0]].fmt(v);
-          }},
-          title: {
-            display: !multiMetric,
-            text: !multiMetric && metrics[0]
-              ? METRIC_CFG[metrics[0]].label + (METRIC_CFG[metrics[0]].unit ? ' (' + METRIC_CFG[metrics[0]].unit + ')' : '')
-              : '',
-            font: { size: 10 }
-          }
+          type: 'linear', position: 'left',
+          display: hasMoneyMetric,
+          ticks: { font: { size: 10 }, callback: v => v.toLocaleString() },
+          title: { display: hasMoneyMetric, text: 'ล้านบาท', font: { size: 10 } },
+          grid: { drawOnChartArea: true },
+        },
+        y1: {
+          type: 'linear', position: 'right',
+          display: hasRatioMetric,
+          ticks: { font: { size: 10 }, callback: v => v % 1 === 0 ? v.toFixed(0) : v.toFixed(2) },
+          title: { display: hasRatioMetric, text: 'Ratio / Score', font: { size: 10 } },
+          grid: { drawOnChartArea: !hasMoneyMetric },
         }
       }
     }
   });
+  renderFocusAnalysis();
 }
 
 // ── Reset ────────────────────────────────────────────────────
@@ -2734,6 +2841,191 @@ function resetFocusFilters() {
   if (tSel) tSel.value = '';
   if (fSel) fSel.value = fState.period;
   renderFocusPage();
+}
+
+
+// ═══════════════════════════════════════════════════════════════
+// FOCUS ANALYSIS + PDF
+// ═══════════════════════════════════════════════════════════════
+
+function computeTrendStats(hospId, metric) {
+  const recs = RAW.records
+    .filter(r => r.id === hospId && r[metric] != null)
+    .sort((a, b) => a.sort_key - b.sort_key);
+  if (recs.length < 2) return null;
+
+  const vals    = recs.map(r => r[metric]);
+  const periods = recs.map(r => r.period);
+  const n       = vals.length;
+
+  // Linear regression slope
+  const meanX = (n - 1) / 2;
+  const meanY = vals.reduce((s, v) => s + v, 0) / n;
+  let num = 0, den = 0;
+  vals.forEach((v, i) => { num += (i - meanX) * (v - meanY); den += (i - meanX) ** 2; });
+  const slope = den ? num / den : 0;
+
+  // Max single-month delta
+  let maxDelta = 0, maxDeltaIdx = 1;
+  for (let i = 1; i < n; i++) {
+    if (Math.abs(vals[i] - vals[i - 1]) > Math.abs(maxDelta)) {
+      maxDelta = vals[i] - vals[i - 1];
+      maxDeltaIdx = i;
+    }
+  }
+
+  const first = vals[0], last = vals[n - 1];
+  const changePct = first !== 0 ? ((last - first) / Math.abs(first)) * 100 : null;
+
+  return {
+    slope, first, last, changePct,
+    maxDelta, maxDeltaPeriod: periods[maxDeltaIdx],
+    firstPeriod: periods[0], lastPeriod: periods[n - 1],
+    latestVal: last, n
+  };
+}
+
+function generateHospAnalysis(hospId) {
+  const nm      = getHospName(hospId);
+  const info    = RAW.records.find(r => r.id === hospId);
+  const prov    = info ? info.prov : '';
+  const type    = info ? info.type : '';
+  const metrics = [...fState.trendMetrics];
+
+  const GOOD_UP   = new Set(['CR','QR','Cash','NWC','NI','EBITDA','bumrung']);
+  const GOOD_DOWN = new Set(['risk','LiI','StI','SuI']);
+
+  const statsMap = {};
+  metrics.forEach(m => {
+    const recs = RAW.records.filter(r => r.id === hospId && r[m] != null)
+                            .sort((a,b) => a.sort_key - b.sort_key);
+    if (recs.length < 2) return;
+    const vals = recs.map(r => r[m]);
+    const n    = vals.length;
+    const meanX = (n-1)/2, meanY = vals.reduce((s,v)=>s+v,0)/n;
+    let num=0,den=0;
+    vals.forEach((v,i)=>{num+=(i-meanX)*(v-meanY);den+=(i-meanX)**2;});
+    const slope = den ? num/den : 0;
+    const tail=vals.slice(-6),tn=tail.length,tmX=(tn-1)/2,tmY=tail.reduce((s,v)=>s+v,0)/tn;
+    let tn2=0,td2=0;
+    tail.forEach((v,i)=>{tn2+=(i-tmX)*(v-tmY);td2+=(i-tmX)**2;});
+    const recentSlope = td2 ? tn2/td2 : 0;
+    let maxDelta=0,maxDeltaIdx=1;
+    for(let i=1;i<n;i++) if(Math.abs(vals[i]-vals[i-1])>Math.abs(maxDelta)){maxDelta=vals[i]-vals[i-1];maxDeltaIdx=i;}
+    const first=vals[0],last=vals[n-1];
+    const changePct = first!==0 ? ((last-first)/Math.abs(first))*100 : null;
+    statsMap[m] = { slope, recentSlope, first, last, changePct, maxDelta,
+      maxDeltaPeriod: recs[maxDeltaIdx].period,
+      firstPeriod: recs[0].period, lastPeriod: recs[n-1].period, latestVal: last, n };
+  });
+
+  const improving=[], worsening=[], neutral=[];
+  metrics.forEach(m => {
+    const s = statsMap[m]; if (!s) return;
+    const cfg = METRIC_CFG[m];
+    const trendGoodOverall = GOOD_UP.has(m) ? s.slope > 0.005 : s.slope < -0.005;
+    const trendGoodRecent  = GOOD_UP.has(m) ? s.recentSlope > 0.005 : s.recentSlope < -0.005;
+    const isUp=s.slope>0.005, isDown=s.slope<-0.005;
+    const pct = s.changePct!=null ? Math.abs(s.changePct).toFixed(1)+'%' : '';
+    const dir = isUp ? '↑' : isDown ? '↓' : '→';
+    const entry = { m, cfg, s, dir, pct, trendGoodOverall, trendGoodRecent, isUp, isDown };
+    if (Math.abs(s.slope) < 0.005) neutral.push(entry);
+    else if (trendGoodOverall) improving.push(entry);
+    else worsening.push(entry);
+  });
+
+  const totalW=worsening.length, totalI=improving.length;
+  let overallIcon, overallText, overallBg;
+  if      (totalW > totalI)          { overallIcon='🔴'; overallText='สถานการณ์แย่ลง';               overallBg='#fee2e2'; }
+  else if (totalI > totalW)          { overallIcon='🟢'; overallText='สถานการณ์ดีขึ้น';              overallBg='#dcfce7'; }
+  else if (totalI===0&&totalW===0)   { overallIcon='⚪'; overallText='ค่อนข้างคงที่';               overallBg='#f1f5f9'; }
+  else                               { overallIcon='🟡'; overallText='ผสมผสาน — บางตัวดี/บางตัวแย่'; overallBg='#fef9c3'; }
+
+  function renderEntry(e, col) {
+    const latest   = e.cfg.fmt(e.s.latestVal)+(e.cfg.unit?' '+e.cfg.unit:'');
+    const chgStr   = e.pct ? ` ${e.dir}${e.pct}` : '';
+    const recTxt   = e.trendGoodRecent !== e.trendGoodOverall
+      ? ` <em style="color:#0891b2">(ช่วงล่าสุดเริ่ม${e.trendGoodRecent?'ดีขึ้น':'แย่ลง'})</em>` : '';
+    const spDir    = e.s.maxDelta>0 ? 'เพิ่มขึ้น' : 'ลดลง';
+    return `<li style="margin-bottom:8px;line-height:1.7">
+        <strong style="color:${col}">${e.cfg.label}</strong>${chgStr} — ล่าสุด <strong>${latest}</strong>${recTxt}<br>
+        <span style="font-size:10px;color:#64748b">${e.s.firstPeriod}–${e.s.lastPeriod}: ${e.cfg.fmt(e.s.first)} → ${e.cfg.fmt(e.s.last)}${e.cfg.unit?' '+e.cfg.unit:''}
+        &nbsp;|&nbsp; จุดเปลี่ยนรุนแรง: <strong>${e.s.maxDeltaPeriod}</strong> ${spDir} ${e.cfg.fmt(Math.abs(e.s.maxDelta))}${e.cfg.unit?' '+e.cfg.unit:''}</span>
+      </li>`;
+  }
+
+  const worseHTML = worsening.length ? `<div style="margin-bottom:10px">
+      <div style="font-size:11px;font-weight:700;color:#991b1b;margin-bottom:4px">📉 ตัวแปรที่แย่ลง (${worsening.length} ตัว)</div>
+      <ul style="margin:0;padding-left:16px;font-size:11px">${worsening.map(e=>renderEntry(e,'#dc2626')).join('')}</ul></div>` : '';
+
+  const betterHTML = improving.length ? `<div style="margin-bottom:10px">
+      <div style="font-size:11px;font-weight:700;color:#15803d;margin-bottom:4px">📈 ตัวแปรที่ดีขึ้น (${improving.length} ตัว)</div>
+      <ul style="margin:0;padding-left:16px;font-size:11px">${improving.map(e=>renderEntry(e,'#16a34a')).join('')}</ul></div>` : '';
+
+  const neutHTML = neutral.length ? `<div style="margin-bottom:10px">
+      <div style="font-size:11px;font-weight:700;color:#64748b;margin-bottom:4px">→ ค่อนข้างคงที่ (${neutral.length} ตัว)</div>
+      <ul style="margin:0;padding-left:16px;font-size:11px">${neutral.map(e=>`<li><strong>${e.cfg.label}</strong> — ล่าสุด ${e.cfg.fmt(e.s.latestVal)}${e.cfg.unit?' '+e.cfg.unit:''}</li>`).join('')}</ul></div>` : '';
+
+  let corrHTML = '';
+  if (metrics.length > 1) {
+    const upM   = metrics.filter(m => statsMap[m] && statsMap[m].slope > 0.005);
+    const downM = metrics.filter(m => statsMap[m] && statsMap[m].slope < -0.005);
+    const parts = [];
+    if (upM.length > 1)   parts.push(`<span style="color:#15803d">↑ ${upM.map(m=>METRIC_CFG[m].label).join(', ')} เพิ่มขึ้นพร้อมกัน</span>`);
+    if (downM.length > 1) parts.push(`<span style="color:#92400e">↓ ${downM.map(m=>METRIC_CFG[m].label).join(', ')} ลดลงพร้อมกัน</span>`);
+    upM.forEach(u => downM.forEach(d => {
+      if (GOOD_UP.has(u)&&GOOD_DOWN.has(d)) parts.push(`<span style="color:#0891b2">${METRIC_CFG[u].label} ↑ / ${METRIC_CFG[d].label} ↓ สัญญาณเชิงบวก</span>`);
+      if (GOOD_DOWN.has(u)&&GOOD_UP.has(d)) parts.push(`<span style="color:#dc2626">${METRIC_CFG[u].label} ↑ / ${METRIC_CFG[d].label} ↓ สัญญาณเสี่ยง</span>`);
+    }));
+    if (parts.length) corrHTML = `<div style="margin-bottom:10px;padding:8px 12px;background:#f0f9ff;border:1px solid #bae6fd;border-radius:7px">
+      <div style="font-size:11px;font-weight:700;color:#0369a1;margin-bottom:5px">🔗 ความสัมพันธ์ระหว่างตัวแปร</div>
+      <div style="font-size:11px;line-height:1.8">${parts.join('<br>')}</div></div>`;
+  }
+
+  const latest = RAW.records.filter(r=>r.id===hospId).sort((a,b)=>b.sort_key-a.sort_key)[0];
+  let sumParts = [];
+  if (latest) {
+    const {risk,CR,NI,bumrung,EBITDA} = latest;
+    if (risk>=6)      sumParts.push(`Risk Score ${risk.toFixed(0)} วิกฤต ต้องแก้ไขเร่งด่วน`);
+    else if (risk>=4) sumParts.push(`Risk Score ${risk.toFixed(0)} น่าเป็นห่วง ควรวางแผนรับมือ`);
+    else if (risk<=1) sumParts.push(`Risk Score ${risk.toFixed(0)} อยู่ในเกณฑ์ดี`);
+    if (CR<1.0)       sumParts.push(`สภาพคล่องต่ำ (CR ${CR.toFixed(2)}) เสี่ยงขาดสภาพคล่อง`);
+    else if (CR>=1.5) sumParts.push(`สภาพคล่องดี (CR ${CR.toFixed(2)})`);
+    if (EBITDA<0)     sumParts.push(`EBITDA ติดลบ (${EBITDA.toFixed(1)} ล้าน)`);
+    else if (statsMap['bumrung']&&statsMap['bumrung'].slope<-0.3)
+                      sumParts.push(`EBITDA บวก (${EBITDA.toFixed(1)} ล้าน) แต่เงินบำรุงลดต่อเนื่อง ควรตรวจสอบกระแสเงินสด`);
+    if (bumrung<0)    sumParts.push(`เงินบำรุงสุทธิติดลบ (${bumrung.toFixed(1)} ล้าน)`);
+    if (NI<-20)       sumParts.push(`ขาดทุนสุทธิ ${NI.toFixed(1)} ล้าน`);
+  }
+  const sumHTML = sumParts.length ? `<div style="padding:10px 14px;background:#fffbeb;border:1px solid #fde68a;border-radius:8px;font-size:11px;color:#713f12;line-height:1.75">
+    💡 <strong>สรุป:</strong> ${sumParts.join(' — ')}</div>` : '';
+
+  return `
+  <div class="ana-hosp-block">
+    <div class="ana-hosp-hdr">
+      <span class="ana-hosp-name">${nm}</span>
+      <span class="ana-hosp-meta">${prov}${type?' · '+type:''}</span>
+    </div>
+    <div style="display:inline-flex;align-items:center;gap:8px;padding:6px 14px;border-radius:20px;font-size:12px;font-weight:700;background:${overallBg};margin-bottom:12px">
+      ${overallIcon} ${overallText}
+      <span style="font-size:10px;font-weight:400;opacity:.75">(ดีขึ้น ${totalI} / แย่ลง ${totalW} / คงที่ ${neutral.length} ตัวแปร)</span>
+    </div>
+    ${worseHTML}${betterHTML}${neutHTML}${corrHTML}${sumHTML}
+  </div>`;
+}
+
+
+function renderFocusAnalysis() {
+  const wrap = document.getElementById('focus-analysis-wrap');
+  if (!wrap) return;
+  if (!fState.selected.size) { wrap.style.display = 'none'; return; }
+  wrap.style.display = '';
+  document.getElementById('focus-analysis-content').innerHTML =
+    [...fState.selected].map(id => generateHospAnalysis(id)).join('');
+}
+
+function printFocusPage() {
+  window.print();
 }
 
 </script>
@@ -2761,3 +3053,5 @@ function resetFocusFilters() {
 </body>
 </html
 >
+
+
