@@ -355,6 +355,7 @@ body{font-family:'Segoe UI',system-ui,sans-serif;background:var(--bg);color:#1e2
 </div>
 
 <div class="container">
+  <div id="narrative-insight" style="margin-bottom:0"></div>
   <div class="section-title">🎯 ระดับความเสี่ยง Risk Score (0–7) — คลิกที่ระดับเพื่อดูรายชื่อโรงพยาบาล</div>
   <div class="risk-grid" id="risk-grid"></div>
 
@@ -760,6 +761,7 @@ function applyFilters() {
   renderBumrungStatus();
   updateTrendChart();
   renderYoY();
+  renderNarrativeInsight();
 
   // ── Refresh side panel if already open ──
   if (activeKey) {
@@ -767,6 +769,93 @@ function applyFilters() {
     if (items) { panelItems = items; renderPanelList(); }
     else closePanel();
   }
+}
+
+// ── NARRATIVE INSIGHT ────────────────────────────────────────────
+function renderNarrativeInsight() {
+  var el = document.getElementById('narrative-insight');
+  if (!el) return;
+  if (!filtered || filtered.length === 0) { el.innerHTML = ''; return; }
+
+  // ใช้ period ล่าสุดเป็น snapshot
+  var periods = [...new Set(filtered.map(r => r.period))].sort();
+  var latestPeriod = periods[periods.length - 1];
+  var snap = filtered.filter(r => r.period === latestPeriod);
+  if (snap.length === 0) snap = filtered;
+
+  var snapTotal = snap.length;
+  var highRisk   = snap.filter(r => r.risk >= 5).length;
+  var crisisRisk = snap.filter(r => r.risk >= 6).length;
+  var negBumrung = snap.filter(r => r.bumrung != null && r.bumrung < 0).length;
+  var posBumrung = snap.filter(r => r.bumrung != null && r.bumrung > 0).length;
+  var sumNeg     = snap.filter(r => r.bumrung != null && r.bumrung < 0)
+                       .reduce((s, r) => s + r.bumrung, 0);
+
+  // จังหวัดที่มี risk สูงมากที่สุด
+  var provRisk = {};
+  snap.filter(r => r.risk >= 5).forEach(r => { provRisk[r.prov] = (provRisk[r.prov]||0)+1; });
+  var topProvRisk = Object.entries(provRisk).sort((a,b) => b[1]-a[1])[0];
+
+  // จังหวัดที่มีเงินบำรุงติดลบมากที่สุด
+  var provNeg = {};
+  snap.filter(r => r.bumrung != null && r.bumrung < 0)
+      .forEach(r => { provNeg[r.prov] = (provNeg[r.prov]||0)+1; });
+  var topProvNeg = Object.entries(provNeg).sort((a,b) => b[1]-a[1])[0];
+
+  var highRiskPct = snapTotal > 0 ? Math.round(highRisk / snapTotal * 100) : 0;
+  var negPct      = snapTotal > 0 ? Math.round(negBumrung / snapTotal * 100) : 0;
+  var sumNegM     = Math.abs(sumNeg).toFixed(1);
+
+  // สถานะภาพรวม
+  var status = (highRiskPct >= 30 || negPct >= 40) ? 'critical'
+             : (highRiskPct >= 15 || negPct >= 20) ? 'warning' : 'ok';
+  var sm = {
+    critical: { bg:'#fff1f2', border:'#ef4444', titleColor:'#b91c1c', icon:'🔴', label:'ต้องเฝ้าระวัง' },
+    warning:  { bg:'#fffbeb', border:'#f59e0b', titleColor:'#92400e', icon:'🟡', label:'ควรติดตาม' },
+    ok:       { bg:'#f0fdf4', border:'#22c55e', titleColor:'#15803d', icon:'🟢', label:'ภาพรวมปกติ' }
+  }[status];
+
+  var lines = [];
+
+  // บรรทัด 1: ความเสี่ยง
+  if (highRisk > 0) {
+    var t = '<strong>' + highRisk + ' แห่ง (' + highRiskPct + '%)</strong> มีความเสี่ยงสูง (Risk ≥ 5)';
+    if (crisisRisk > 0)
+      t += ' โดย <strong style="color:#dc2626">' + crisisRisk + ' แห่ง</strong> อยู่ในกลุ่มวิกฤต (Risk 6–7)';
+    if (topProvRisk)
+      t += ' — ' + topProvRisk[0] + ' มีมากที่สุด <strong>' + topProvRisk[1] + ' แห่ง</strong>';
+    lines.push({ icon:'⚠️', text:t, color:'#b91c1c' });
+  } else {
+    lines.push({ icon:'✅', text:'ไม่พบโรงพยาบาลที่มีความเสี่ยงสูง (Risk ≥ 5) ในกลุ่มที่แสดง', color:'#15803d' });
+  }
+
+  // บรรทัด 2: เงินบำรุง
+  if (negBumrung > 0) {
+    var t2 = '<strong>' + negBumrung + ' แห่ง (' + negPct + '%)</strong> มีเงินบำรุงสุทธิติดลบ รวม <strong>' + sumNegM + ' ล้านบาท</strong>';
+    if (topProvNeg)
+      t2 += ' — ' + topProvNeg[0] + ' มีมากที่สุด ' + topProvNeg[1] + ' แห่ง';
+    lines.push({ icon:'💸', text:t2, color:'#b45309' });
+  }
+
+  // บรรทัด 3: สัญญาณบวก
+  if (posBumrung > 0) {
+    var sign = negBumrung > 0 ? 'ส่วนที่เหลืออีก ' : '';
+    lines.push({ icon:'💰', text: sign + '<strong>' + posBumrung + ' แห่ง</strong> มีเงินบำรุงสุทธิเป็นบวก — สถานะการเงินยังมั่นคง', color:'#15803d' });
+  }
+
+  var periodLabel = periods.length === 1 ? latestPeriod : periods.length + ' งวด';
+
+  el.innerHTML =
+    '<div style="background:' + sm.bg + ';border:1.5px solid ' + sm.border + ';border-radius:12px;padding:16px 20px;margin-bottom:20px">' +
+      '<div style="display:flex;align-items:center;gap:8px;margin-bottom:10px">' +
+        '<span style="font-size:16px">' + sm.icon + '</span>' +
+        '<span style="font-weight:700;font-size:15px;color:' + sm.titleColor + '">สรุปภาพรวม — ' + sm.label + '</span>' +
+        '<span style="color:#94a3b8;font-size:13px;margin-left:4px">' + snapTotal + ' รพ. · ' + periodLabel + '</span>' +
+      '</div>' +
+      lines.map(function(l) {
+        return '<div style="margin-bottom:5px;font-size:14px;color:' + l.color + ';line-height:1.6">' + l.icon + ' ' + l.text + '</div>';
+      }).join('') +
+    '</div>';
 }
 
 // ── RISK GRID ─────────────────────────────────────────────────
