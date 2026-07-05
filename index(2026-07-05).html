@@ -2265,45 +2265,6 @@ function renderFinancialSummary() {
 // ══════════════════════════════════════════════════════════════════════════
 // SECTION 3: BUMRUNG STATUS — รายจังหวัด + รายละเอียด รพ.
 // ══════════════════════════════════════════════════════════════════════════
-// ── Sortable headers for the bumrung pos/neg hospital tables ──
-let bumSort = { pos: { col: 'bumrung', dir: 'desc' }, neg: { col: 'risk', dir: 'desc' } };
-const BUM_COLS = {
-  prov:    { get: r => r.prov,     type: 'str' },
-  name:    { get: r => r.name,     type: 'str' },
-  type:    { get: r => r.type,     type: 'str' },
-  bumrung: { get: r => +r.bumrung, type: 'num' },
-  Cash:    { get: r => +r.Cash,    type: 'num' },
-  risk:    { get: r => +r.risk,    type: 'num' },
-};
-function bumDefaultDir(table, col) {
-  if (col === 'bumrung') return table === 'pos' ? 'desc' : 'asc';
-  if (col === 'risk')    return 'desc';
-  if (col === 'Cash')    return 'asc';
-  return 'asc'; // จังหวัด / โรงพยาบาล / ประเภท เรียง ก-ฮ ก่อน
-}
-function bumCompare(a, b, col, dir) {
-  const { get, type } = BUM_COLS[col];
-  let cmp = type === 'str' ? String(get(a)).localeCompare(String(get(b)), 'th') : get(a) - get(b);
-  if (dir === 'desc') cmp = -cmp;
-  if (cmp !== 0) return cmp;
-  if (col === 'risk') { // ค่าเริ่มต้น: Risk เท่ากัน → เงินบำรุงน้อยสุดมาก่อน (วิกฤตกว่า)
-    const t = (+a.bumrung) - (+b.bumrung);
-    if (t !== 0) return t;
-  }
-  return String(a.name).localeCompare(String(b.name), 'th');
-}
-function sortBumTable(table, col) {
-  const st = bumSort[table];
-  st.dir = (st.col === col) ? (st.dir === 'asc' ? 'desc' : 'asc') : bumDefaultDir(table, col);
-  st.col = col;
-  renderBumrungStatus();
-}
-function bumTh(table, col, label) {
-  const st = bumSort[table];
-  const arrow = st.col === col ? (st.dir === 'asc' ? ' ▲' : ' ▼') : '';
-  return `<th style="cursor:pointer;user-select:none" onclick="sortBumTable('${table}','${col}')" title="คลิกเพื่อเรียงลำดับ">${label}${arrow}</th>`;
-}
-
 function renderBumrungStatus() {
   const wrap = document.getElementById('bum-sum-wrap');
   const lbl  = document.getElementById('bum-sum-label');
@@ -2347,10 +2308,10 @@ function renderBumrungStatus() {
   const sumPos = allPos.reduce((s,r) => s + +r.bumrung, 0);
   const sumNeg = allNeg.reduce((s,r) => s + +r.bumrung, 0);
 
-  // Positive bumrung hospitals — sortable, default: bumrung DESC
+  // Positive bumrung hospitals — sorted bumrung DESC
   const posHosps = [...recs]
     .filter(r => +r.bumrung >= 0)
-    .sort((a, b) => bumCompare(a, b, bumSort.pos.col, bumSort.pos.dir));
+    .sort((a, b) => +b.bumrung - +a.bumrung);
   const maxPos = Math.max(...posHosps.map(r => +r.bumrung), 1);
   const posRows = posHosps.map((r, i) => {
     const bum = +r.bumrung;
@@ -2373,10 +2334,14 @@ function renderBumrungStatus() {
     </tr>`;
   }).join('');
 
-  // Hospital detail table — only negative bumrung, sortable, default: risk DESC → bumrung ASC
+  // Hospital detail table — only negative bumrung, sorted: risk DESC → Cash ASC → bumrung ASC
   const negHosps = [...recs]
     .filter(r => +r.bumrung < 0)
-    .sort((a, b) => bumCompare(a, b, bumSort.neg.col, bumSort.neg.dir));
+    .sort((a, b) => {
+      if (+b.risk !== +a.risk) return +b.risk - +a.risk;
+      if (+a.Cash !== +b.Cash) return +a.Cash - +b.Cash;
+      return +a.bumrung - +b.bumrung;
+    });
   const maxAbsNeg = Math.max(...negHosps.map(r => Math.abs(+r.bumrung)), 1);
   const detailRows = negHosps.map((r, i) => {
     const bum = +r.bumrung;
@@ -2431,36 +2396,36 @@ function renderBumrungStatus() {
       </div>
       <div style="overflow-y:auto;max-height:560px">
         <p style="font-size:12px;font-weight:700;color:#166534;margin-bottom:6px">
-          รพ. เงินบำรุงสุทธิเป็นบวก (${posHosps.length} แห่ง) <span style="font-weight:400;color:#94a3b8">— คลิกหัวตารางเพื่อเรียงลำดับ</span>
+          รพ. เงินบำรุงสุทธิเป็นบวก (${posHosps.length} แห่ง) — เรียงจากมากที่สุด
         </p>
         <table class="bum-hosp-tbl">
           <thead>
             <tr>
               <th>#</th>
-              ${bumTh('pos','prov','จังหวัด')}
-              ${bumTh('pos','name','โรงพยาบาล')}
-              ${bumTh('pos','type','ประเภท')}
-              ${bumTh('pos','bumrung','เงินบำรุงสุทธิ (ล้านบาท)')}
-              ${bumTh('pos','Cash','Cash Ratio')}
-              ${bumTh('pos','risk','Risk')}
+              <th>จังหวัด</th>
+              <th class="hosp">โรงพยาบาล</th>
+              <th>ประเภท</th>
+              <th>เงินบำรุงสุทธิ (ล้านบาท)</th>
+              <th>Cash Ratio</th>
+              <th>Risk</th>
             </tr>
           </thead>
           <tbody>${posRows}</tbody>
         </table>
         <div style="border-top:2px solid #e2e8f0;margin:12px 0 8px"></div>
         <p style="font-size:12px;font-weight:700;color:#991b1b;margin-bottom:6px">
-          รพ. เงินบำรุงสุทธิติดลบ (${negHosps.length} แห่ง) <span style="font-weight:400;color:#94a3b8">— คลิกหัวตารางเพื่อเรียงลำดับ (ค่าเริ่มต้น: Risk สูงสุด → เงินบำรุงน้อยสุด)</span>
+          รพ. เงินบำรุงสุทธิติดลบ (${negHosps.length} แห่ง) — เรียงลำดับจาก Risk สูงสุด → Cash ต่ำสุด
         </p>
         <table class="bum-hosp-tbl">
           <thead>
             <tr>
               <th>#</th>
-              ${bumTh('neg','prov','จังหวัด')}
-              ${bumTh('neg','name','โรงพยาบาล')}
-              ${bumTh('neg','type','ประเภท')}
-              ${bumTh('neg','bumrung','เงินบำรุงสุทธิ (ล้านบาท)')}
-              ${bumTh('neg','Cash','Cash Ratio')}
-              ${bumTh('neg','risk','Risk')}
+              <th>จังหวัด</th>
+              <th class="hosp">โรงพยาบาล</th>
+              <th>ประเภท</th>
+              <th>เงินบำรุงสุทธิ (ล้านบาท)</th>
+              <th>Cash Ratio</th>
+              <th>Risk</th>
             </tr>
           </thead>
           <tbody>${detailRows}</tbody>
