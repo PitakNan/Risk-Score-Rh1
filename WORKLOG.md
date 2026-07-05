@@ -1,5 +1,21 @@
 # Work Log — Risk Score Dashboard
 
+## 2026-07-05 — เพิ่ม Sort คลิกหัวตาราง (ตาราง รพ. เงินบำรุงบวก/ลบ)
+
+**ฟีเจอร์ใหม่ใน `renderBumrungStatus()`:** คลิกหัวตาราง (จังหวัด/โรงพยาบาล/ประเภท/เงินบำรุงสุทธิ/Cash Ratio/Risk) เพื่อเรียงลำดับได้เองทั้ง 2 ตาราง คลิกซ้ำสลับทิศทาง มาก↔น้อย มีลูกศร ▲▼ บอกคอลัมน์+ทิศทางที่ใช้อยู่ สถานะ sort ของ 2 ตารางแยกอิสระจากกัน (ตัวแปร `bumSort.pos` / `bumSort.neg`)
+
+**ค่าเริ่มต้น (ก่อนคลิกอะไร):**
+- ตาราง รพ. เงินบำรุงบวก (42 แห่ง): เรียงเงินบำรุงสุทธิ มาก→น้อย (เหมือนเดิม)
+- ตาราง รพ. เงินบำรุงลบ (61 แห่ง): เรียง Risk มาก→น้อย (7→1) ก่อน แล้วตามด้วยเงินบำรุงสุทธิ น้อย→มาก เป็น tiebreak (**ตัดเงื่อนไข Cash Ratio ที่เคยเป็น tiebreak ชั้น 2 ออก** เพราะ Cash Ratio กลายเป็นคอลัมน์ sort เองได้แล้ว)
+
+ทดสอบด้วย Playwright ยืนยันแล้วว่า default order + click-to-sort + toggle ทิศทาง ทำงานถูกต้องครบทุกกรณี ไม่มี JS error
+
+**Deploy แล้ว:** commit `3959ac7` push ขึ้น https://github.com/PitakNan/Risk-Score-Rh1 เรียบร้อย (backup index เดิมก่อนแก้ไว้ที่ `index(2026-07-05).html` ในโฟลเดอร์ repo ตาม convention เดิม)
+
+## 2026-07-05 — จัดระเบียบไฟล์ที่ไม่เกี่ยวข้อง/เลิกใช้แล้ว
+
+ย้าย repo GitHub เก่า `D:\Github\Risk-Score` (ก่อนเปลี่ยนชื่อเป็น Risk-Score-Rh1), ไฟล์ backup เก่าในโฟลเดอร์นี้ (30 ไฟล์), ไฟล์ index วันที่เก่าใน deploy repo, สคริปต์ scratch/ ยุค Flask+SQLite, โฟลเดอร์ 9.Github ที่ซ้ำซ้อน, และโปรเจกต์ tps-dashboard ที่หลงมาอยู่ผิดที่ — ทั้งหมดย้ายไป `D:\OneDrive\Share Rh1-New\0 Claude Cowork\_Backup\` (ไม่ได้ลบทิ้ง ดูรายละเอียดที่ README.md ในนั้น) **GitHub repo เก่า `pitaknan/Risk-Score` บนเว็บยังไม่ได้ลบ**
+
 ## กระบวนการ Deploy ไปยัง GitHub Pages
 
 **คำสั่ง trigger:** ผู้ใช้พูดว่า **"Deploy เลย"**
