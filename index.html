@@ -1132,7 +1132,8 @@ function openHospDetail(hospId, evt) {
   if (!r) return;
   document.getElementById('hd-title').textContent = r.name;
   document.getElementById('hd-meta').innerHTML =
-    `<span>🗺️ ${r.prov}</span><span>🏥 ${r.type}</span><span>รหัส ${r.id}</span>`;
+    `<span>🗺️ ${r.prov}</span><span>🏥 ${r.type}</span><span>รหัส ${r.id}</span>` +
+    `<a href="https://pitaknan.github.io/Rh1-BalanceSheet/risk_drill.html#h/${String(r.id).padStart(5,'0')}" target="_blank" style="opacity:1;color:#2563eb;text-decoration:none;font-weight:600">🔎 ไล่สาเหตุจากงบทดลอง →</a>`;
   document.getElementById('hd-overlay').classList.add('open');
   renderHospDetail();
 }
