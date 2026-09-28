@@ -292,7 +292,11 @@ body{font-family:'Segoe UI',system-ui,sans-serif;background:var(--bg);color:#1e2
   .section-title:has(+#focus-var-chips),.panel-overlay,.hd-overlay{display:none!important}
   #page-main{display:none!important}
   #page-focus{display:block!important}
-  #page-repeat:not([style*="display: none"]){display:block!important}
+  #page-repeat{display:none!important}
+  /* พิมพ์จากแท็บวิกฤตซ้ำซ้อน: โชว์เฉพาะแท็บนั้น (body.rct-printing ตั้งโดย beforeprint) */
+  body.rct-printing #page-main,
+  body.rct-printing #page-focus{display:none!important}
+  body.rct-printing #page-repeat{display:block!important}
   .container{padding:0!important;max-width:100%!important}
   .section-title{font-size:11px;margin:12px 0 6px}
   .focus-tbl-wrap{overflow:visible!important;max-height:none!important;border:none!important;box-shadow:none!important}
@@ -363,6 +367,55 @@ body{font-family:'Segoe UI',system-ui,sans-serif;background:var(--bg);color:#1e2
 #page-repeat .rct-badge{display:inline-block;font-size:11.5px;font-weight:700;padding:1px 8px;border-radius:20px;min-width:22px}
 #page-repeat .rct-nodata{font-size:10px;color:var(--rct-ink3);font-style:italic}
 #page-repeat svg.rct-spark{display:block;margin:0 auto}
+#page-repeat .rct-table thead th.rct-sortable{cursor:pointer;user-select:none;transition:background .15s,color .15s}
+#page-repeat .rct-table thead th.rct-sortable:hover{background:var(--rct-accent-soft);color:var(--rct-accent)}
+#page-repeat .rct-table thead th.rct-sortable:hover .rct-fy{color:var(--rct-accent)}
+#page-repeat .rct-table thead th.is-sorted{background:var(--rct-accent-soft)}
+#page-repeat .rct-sort-ar{font-size:9px;margin-left:3px;color:var(--rct-ink3);opacity:.45}
+#page-repeat .rct-sort-ar.on{color:var(--rct-accent);opacity:1;font-size:10px}
+#page-repeat .rct-printcap{display:none}
+#page-repeat .rct-pc-title{font-size:15px;font-weight:700;color:#0f172a}
+#page-repeat .rct-pc-sub{font-size:10px;color:#475569;margin-top:2px}
+@media print{
+  /* บังคับให้พิมพ์สีพื้น/แถบ/เส้นกราฟออกมาจริง ไม่งั้นเบราว์เซอร์ตัดพื้นหลังทิ้งหมด */
+  body.rct-printing,
+  body.rct-printing #page-repeat *{-webkit-print-color-adjust:exact!important;print-color-adjust:exact!important}
+  body.rct-printing #page-repeat{padding:0!important;max-width:100%!important}
+  /* ซ่อนตัวควบคุม โชว์หัวกระดาษแทน */
+  body.rct-printing #page-repeat .rct-controls,
+  body.rct-printing #page-repeat .rct-lede{display:none!important}
+  body.rct-printing #page-repeat .rct-printcap{display:block!important;margin-bottom:8px}
+  /* KPI ย่อลงให้พอดีบรรทัดเดียว */
+  body.rct-printing #page-repeat .rct-kpis{grid-template-columns:repeat(4,1fr)!important;gap:6px!important;margin-bottom:8px!important}
+  body.rct-printing #page-repeat .rct-kpi{padding:6px 8px!important;box-shadow:none!important;break-inside:avoid}
+  body.rct-printing #page-repeat .rct-kpi-val{font-size:17px!important}
+  body.rct-printing #page-repeat .rct-kpi-label,
+  body.rct-printing #page-repeat .rct-kpi-sub{font-size:8.5px!important}
+  /* ตาราง: เลิก scroll แนวนอน ให้เห็นครบทุกคอลัมน์ */
+  body.rct-printing #page-repeat .rct-tablewrap{overflow:visible!important;border:0!important;box-shadow:none!important;border-radius:0!important}
+  body.rct-printing #page-repeat table.rct-table{min-width:0!important;width:100%!important;table-layout:fixed}
+  body.rct-printing #page-repeat .rct-table thead{display:table-header-group}
+  body.rct-printing #page-repeat .rct-table thead th{position:static!important;font-size:8.5px!important;padding:4px 2px!important;border-bottom:1.5px solid #94a3b8!important}
+  body.rct-printing #page-repeat .rct-table thead th .rct-fy{font-size:9.5px!important}
+  body.rct-printing #page-repeat .rct-table thead th .rct-fysub{font-size:7px!important}
+  body.rct-printing #page-repeat .rct-sort-ar{display:none!important}
+  body.rct-printing #page-repeat .rct-table tbody tr{break-inside:avoid;page-break-inside:avoid}
+  body.rct-printing #page-repeat .rct-table td{padding:3px 2px!important;border-bottom:1px solid #e2e8f0!important}
+  body.rct-printing #page-repeat .rct-table tbody tr.is-hidden{display:none!important}
+  body.rct-printing #page-repeat .rct-hname{font-size:9px!important}
+  body.rct-printing #page-repeat .rct-hmeta{font-size:7.5px!important}
+  body.rct-printing #page-repeat .rct-metric-val{font-size:11px!important}
+  body.rct-printing #page-repeat .rct-metric-unit{font-size:7px!important}
+  body.rct-printing #page-repeat .rct-badge{font-size:9px!important;padding:0 6px!important}
+  body.rct-printing #page-repeat .rct-rank{font-size:8.5px!important;width:26px!important}
+  body.rct-printing #page-repeat th.rct-hosp,
+  body.rct-printing #page-repeat td.rct-hosp{min-width:0!important;width:17%!important}
+  body.rct-printing #page-repeat th.rct-metric,
+  body.rct-printing #page-repeat td.rct-metric{width:8%!important}
+  body.rct-printing #page-repeat svg.rct-spark{width:100%!important;height:26px!important}
+  body.rct-printing #page-repeat .rct-foot{font-size:7.5px!important;margin-top:8px!important;break-inside:avoid}
+  body.rct-printing .rct-toast,body.rct-printing #rctTip,body.rct-printing .rct-backdrop{display:none!important}
+}
 #page-repeat .rct-empty{padding:40px 20px;text-align:center;color:var(--rct-ink3);font-size:13px}
 #page-repeat .rct-foot{margin-top:12px;font-size:10.5px;color:var(--rct-ink3);line-height:1.8}
 #page-repeat .rct-foot b{color:var(--rct-ink2)}
@@ -621,6 +674,7 @@ body{font-family:'Segoe UI',system-ui,sans-serif;background:var(--bg);color:#1e2
     <b>คลิกแถวเพื่อดูรายละเอียดเชิงลึกรายแห่ง</b>
   </p>
 
+  <div class="rct-printcap" id="rctPrintCap"></div>
   <div class="rct-kpis" id="rctKpis"></div>
 
   <div class="rct-controls">
@@ -3615,7 +3669,8 @@ function printFocusPage() {
   ];
 
   var FYS, PERIODS, HOSPS, PROVS, TYPES, rowEls = null, inited = false;
-  var state = {prov:'ทั้งเขต', type:'ทั้งหมด', sort:'composite', q:'', onlyCrisis:false};
+  var state = {prov:'ทั้งเขต', type:'ทั้งหมด', sort:'composite', q:'', onlyCrisis:false,
+             sortKey:'metric', sortDir:'desc'};
 
   // ---------- สร้างชุดข้อมูลจาก RAW.records ----------
   function shortLabel(period){
@@ -3707,16 +3762,49 @@ function printFocusPage() {
   }
 
   // ---------- table ----------
+  function arrowFor(key){
+    if (state.sortKey !== key) return '<span class="rct-sort-ar">\u21C5</span>';
+    return '<span class="rct-sort-ar on">' + (state.sortDir === 'desc' ? '\u25BC' : '\u25B2') + '</span>';
+  }
+  function thCls(key, base){
+    return (base ? base+' ' : '') + 'rct-sortable' + (state.sortKey === key ? ' is-sorted' : '');
+  }
   function renderHead(){
     var s = SORTS.filter(function(x){return x.key===state.sort;})[0];
-    var h = '<th class="rct-rank">#</th><th class="rct-hosp">โรงพยาบาล</th><th class="rct-metric">'+s.head+'</th>';
+    var h = '<th class="rct-rank">#</th>' +
+      '<th class="'+thCls('name','rct-hosp')+'" data-sk="name" title="คลิกเพื่อเรียงตามชื่อโรงพยาบาล">โรงพยาบาล'+arrowFor('name')+'</th>' +
+      '<th class="'+thCls('metric','rct-metric')+'" data-sk="metric" title="คลิกเพื่อเรียงตาม'+s.head+'">'+s.head+arrowFor('metric')+'</th>';
     FYS.forEach(function(fy,i){
       var last = (i === FYS.length-1);
       var sub = last ? 'ถึง '+(PERIODS[fy]||[]).slice(-1)[0] : 'ปิดปี ก.ย.';
-      h += '<th><span class="rct-fy">FY'+fy+'</span><span class="rct-fysub">'+sub+'</span></th>';
+      var k = 'fy:'+fy;
+      h += '<th class="'+thCls(k,'')+'" data-sk="'+k+'" title="คลิกเพื่อเรียงตาม risk งวดสุดท้ายของ FY'+fy+'">' +
+           '<span class="rct-fy">FY'+fy+arrowFor(k)+'</span><span class="rct-fysub">'+sub+'</span></th>';
     });
-    h += '<th>ล่าสุด</th>';
+    h += '<th class="'+thCls('latest','')+'" data-sk="latest" title="คลิกเพื่อเรียงตาม risk งวดล่าสุด">ล่าสุด'+arrowFor('latest')+'</th>';
     document.getElementById('rctHead').innerHTML = h;
+  }
+
+  // ค่าที่ใช้เรียงของแต่ละคอลัมน์ — null = ไม่มีข้อมูล (ดันไปท้ายเสมอ ไม่ว่าเรียงทางไหน)
+  function sortVal(h, key){
+    if (key === 'name')   return h.n;
+    if (key === 'latest') return h.m.latest;
+    if (key === 'metric') return h.m[state.sort];
+    if (key.indexOf('fy:') === 0){
+      var arr = h.r[key.slice(3)] || [];
+      return arr.length ? arr[arr.length-1] : null;
+    }
+    return 0;
+  }
+  function cmpRows(a, b){
+    var va = sortVal(a, state.sortKey), vb = sortVal(b, state.sortKey), r;
+    if (va === null && vb === null) r = 0;
+    else if (va === null) return 1;
+    else if (vb === null) return -1;
+    else if (typeof va === 'string') r = va.localeCompare(vb, 'th');
+    else r = va - vb;
+    if (state.sortDir === 'desc') r = -r;
+    return r || (b.m.composite - a.m.composite) || a.n.localeCompare(b.n, 'th');
   }
 
   function buildRows(){
@@ -3753,9 +3841,7 @@ function printFocusPage() {
   function render(){
     var s = SORTS.filter(function(x){return x.key===state.sort;})[0];
     var tbody = document.getElementById('rctBody');
-    var list = visibleHosps().sort(function(a,b){
-      return (b.m[s.key] - a.m[s.key]) || (b.m.composite - a.m.composite) || a.n.localeCompare(b.n,'th');
-    });
+    var list = visibleHosps().sort(cmpRows);
     var shown = {};
     list.forEach(function(h){ shown[h.i] = 1; });
     HOSPS.forEach(function(h){
@@ -3771,6 +3857,7 @@ function printFocusPage() {
       tbody.appendChild(tr);
     });
     document.getElementById('rctEmpty').style.display = list.length ? 'none' : '';
+    renderPrintCap(list);
     renderHead();
     renderKpis(list);
   }
@@ -3792,6 +3879,24 @@ function printFocusPage() {
       '<div class="rct-kpi"><div class="rct-kpi-label">ต่อเนื่องยาวสุดในกลุ่ม</div>' +
         '<div class="rct-kpi-val">'+(top?top.m.longest:0)+'<span style="font-size:13px;font-weight:600"> เดือน</span></div>' +
         '<div class="rct-kpi-sub">'+(top?top.n.replace('รพ. ','')+' · '+top.p:'—')+'</div></div>';
+  }
+
+  // หัวกระดาษสำหรับหน้าพิมพ์ — บอกว่ากรองอะไรอยู่ เรียงด้วยอะไร
+  function renderPrintCap(list){
+    var el = document.getElementById('rctPrintCap');
+    if (!el) return;
+    var s = SORTS.filter(function(x){return x.key===state.sort;})[0];
+    var sortName = state.sortKey === 'name' ? 'ชื่อโรงพยาบาล'
+      : state.sortKey === 'latest' ? 'risk งวดล่าสุด'
+      : state.sortKey === 'metric' ? s.head
+      : 'risk สิ้น FY' + state.sortKey.slice(3);
+    var bits = ['จังหวัด: ' + state.prov, 'ประเภท: ' + state.type];
+    if (state.onlyCrisis) bits.push('เฉพาะที่เคยวิกฤต');
+    if (state.q.trim())   bits.push('ค้นหา: "' + state.q.trim() + '"');
+    bits.push('เรียงตาม: ' + sortName + (state.sortDir === 'desc' ? ' (มาก\u2192น้อย)' : ' (น้อย\u2192มาก)'));
+    el.innerHTML = '<div class="rct-pc-title">ดัชนีวิกฤตซ้ำซ้อน \u2014 Risk Score เขตสุขภาพที่ 1</div>' +
+      '<div class="rct-pc-sub">' + bits.join(' \u00B7 ') + ' \u00B7 แสดง ' + list.length + ' แห่ง' +
+      ' \u00B7 พิมพ์เมื่อ ' + new Date().toLocaleDateString('th-TH', {day:'numeric', month:'long', year:'numeric'}) + '</div>';
   }
 
   // ---------- controls ----------
@@ -3825,7 +3930,10 @@ function printFocusPage() {
       var b = document.createElement('button');
       b.type = 'button'; b.textContent = s.label;
       b.setAttribute('aria-pressed', state.sort===s.key ? 'true':'false');
-      b.addEventListener('click', function(){ state.sort=s.key; renderControls(); render(); });
+      b.addEventListener('click', function(){
+        state.sort = s.key; state.sortKey = 'metric'; state.sortDir = 'desc';
+        renderControls(); render();
+      });
       sg.appendChild(b);
     });
   }
@@ -3967,6 +4075,37 @@ function printFocusPage() {
       render();
     });
     document.getElementById('rctPrint').addEventListener('click', function(){ window.print(); });
+
+    // คลิกหัวคอลัมน์เพื่อเรียง — listener อยู่ที่ <tr> จึงไม่หายตอน renderHead เขียน innerHTML ใหม่
+    document.getElementById('rctHead').addEventListener('click', function(e){
+      var th = e.target.closest ? e.target.closest('th[data-sk]') : null;
+      if (!th) return;
+      var k = th.getAttribute('data-sk');
+      if (state.sortKey === k) state.sortDir = (state.sortDir === 'desc') ? 'asc' : 'desc';
+      else { state.sortKey = k; state.sortDir = (k === 'name') ? 'asc' : 'desc'; }
+      render();
+    });
+
+    // พิมพ์เฉพาะแท็บที่เปิดอยู่ (รองรับทั้งปุ่มพิมพ์และ Ctrl+P)
+    window.addEventListener('beforeprint', function(){
+      var on = document.getElementById('page-repeat').style.display !== 'none';
+      document.body.classList.toggle('rct-printing', on);
+      // แนวนอนเฉพาะแท็บนี้ (แท็บอื่นพิมพ์ตามเดิม) — ใส่/ถอด <style> ชั่วคราว
+      var st = document.getElementById('rctPageStyle');
+      if (on && !st){
+        st = document.createElement('style');
+        st.id = 'rctPageStyle';
+        st.textContent = '@page{size:A4 landscape;margin:8mm}';
+        document.head.appendChild(st);
+      } else if (!on && st){
+        st.parentNode.removeChild(st);
+      }
+    });
+    window.addEventListener('afterprint', function(){
+      document.body.classList.remove('rct-printing');
+      var st = document.getElementById('rctPageStyle');
+      if (st) st.parentNode.removeChild(st);
+    });
 
     document.getElementById('rctCsv').addEventListener('click', function(){
       var csv = buildCSV();
