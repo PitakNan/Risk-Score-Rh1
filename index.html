@@ -592,8 +592,11 @@ body{font-family:'Segoe UI',system-ui,sans-serif;background:var(--bg);color:#1e2
     <div class="trend-chart-wrap"><canvas id="trend-chart"></canvas></div>
   </div>
 
+  <!-- ซ่อนส่วน "ตัวชี้วัดย่อย (Risk Indicators)" ตามที่ผู้ใช้สั่ง 2026-11-16 (คง element ไว้ให้ JS เรนเดอร์ได้ ไม่พัง) -->
+  <div style="display:none">
   <div class="section-title">📋 ตัวชี้วัดย่อย (Risk Indicators) — คลิก ผ่าน/เฝ้าระวัง/ไม่ผ่าน เพื่อดูรายชื่อ</div>
   <div class="ind-grid" id="ind-grid"></div>
+  </div>
 
   <div style="display:none">
   <div class="section-title">📊 เปรียบเทียบ Year-over-Year (สิ้นปีงบ) <span id="yoy-prov-label" style="font-weight:400;font-size:12px;color:#64748b;margin-left:8px"></span></div>
